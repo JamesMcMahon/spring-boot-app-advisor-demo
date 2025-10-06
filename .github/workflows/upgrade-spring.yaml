@@ -1,0 +1,28 @@
+name: Upgrade Spring
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Maven Settings
+        uses: s4u/setup-maven-action@v1.18.0
+        with:
+          settings-servers: '[{"id": "spring-commercial", "username": "${{ vars.SPRING_COMMERCIAL_USER }}", "password": "${{ secrets.SPRING_COMMERCIAL_TOKEN }}"}]'
+
+      - name: Download and Extract App Advisor
+        run: |
+          curl -L -u "${{ vars.SPRING_COMMERCIAL_USER }}:${{ secrets.SPRING_COMMERCIAL_TOKEN }}" -o application-advisor-cli-linux.tar https://packages.broadcom.com/artifactory/spring-enterprise/com/vmware/tanzu/spring/application-advisor-cli-linux/1.4.1/application-advisor-cli-linux-1.4.1.tar
+          tar xf application-advisor-cli-linux.tar
+          echo "$PWD/cli-binary" >> $GITHUB_PATH
+
+      - name: Run App Advisor
+        # GIT_TOKEN_FOR_PRS is mandatory for pull request creation
+        run: |
+          advisor build-config get
+          advisor upgrade-plan apply --push
+
