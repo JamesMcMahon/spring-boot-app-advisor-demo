@@ -21,7 +21,8 @@ jobs:
           echo "$PWD/cli-binary" >> $GITHUB_PATH
 
       - name: Run App Advisor
-        # GIT_TOKEN_FOR_PRS is mandatory for pull request creation
+        env:
+          GIT_TOKEN_FOR_PRS: ${{ secrets.GIT_TOKEN_FOR_PRS }}
         run: |
           advisor build-config get
           advisor upgrade-plan apply --push
