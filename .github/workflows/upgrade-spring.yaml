@@ -14,6 +14,11 @@ jobs:
         with:
           settings-servers: '[{"id": "spring-commercial", "username": "${{ vars.SPRING_COMMERCIAL_USER }}", "password": "${{ secrets.SPRING_COMMERCIAL_TOKEN }}"}]'
 
+      - name: Fix settings.xml
+        shell: bash
+        run: |
+          sed -i 's|<settings>|<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">|g' ~/.m2/settings.xml
+
       - name: Download and Extract App Advisor
         run: |
           curl -L -u "${{ vars.SPRING_COMMERCIAL_USER }}:${{ secrets.SPRING_COMMERCIAL_TOKEN }}" -o application-advisor-cli-linux.tar https://packages.broadcom.com/artifactory/spring-enterprise/com/vmware/tanzu/spring/application-advisor-cli-linux/1.4.1/application-advisor-cli-linux-1.4.1.tar
