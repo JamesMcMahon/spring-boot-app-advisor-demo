@@ -36,3 +36,16 @@ jobs:
           advisor build-config get
           advisor upgrade-plan apply --push
 
+      - name: Show latest advisor error log
+        if: failure()  # only run if a previous step failed
+        run: |
+          echo "---- Showing latest advisor error log ----"
+          LATEST_LOG=$(ls -t .advisor/errors/*.log 2>/dev/null | head -n 1)
+          if [ -n "$LATEST_LOG" ]; then
+            echo "Latest log file: $LATEST_LOG"
+            echo "----------------------------------------"
+            cat "$LATEST_LOG"
+            echo "----------------------------------------"
+          else
+            echo "No error logs found in .advisor/errors"
+          fi
