@@ -1,0 +1,60 @@
+name: Upgrade Spring (Full)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Maven Settings
+        uses: s4u/setup-maven-action@v1.18.0
+        with:
+          settings-repositories: '[{"id":"spring-commercial", "url":"https://packages.broadcom.com/artifactory/spring-enterprise"}]'
+          settings-servers: '[{"id": "spring-commercial", "username": "${{ vars.SPRING_COMMERCIAL_USER }}", "password": "${{ secrets.SPRING_COMMERCIAL_TOKEN }}"}]'
+
+      - name: Fix settings.xml
+        shell: bash
+        run: |
+          sed -i 's|<settings>|<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">|g' ~/.m2/settings.xml
+
+      - name: Download and Extract App Advisor
+        run: |
+          curl -L -u "${{ vars.SPRING_COMMERCIAL_USER }}:${{ secrets.SPRING_COMMERCIAL_TOKEN }}" -o application-advisor-cli-linux.tar https://packages.broadcom.com/artifactory/spring-enterprise/com/vmware/tanzu/spring/application-advisor-cli-linux/1.4.1/application-advisor-cli-linux-1.4.1.tar
+          tar xf application-advisor-cli-linux.tar
+          echo "$PWD/cli-binary" >> $GITHUB_PATH
+
+      - name: Run App Advisor
+        env:
+          GIT_TOKEN_FOR_PRS: ${{ secrets.GIT_TOKEN_FOR_PRS }}
+        run: |
+          advisor build-config get
+          advisor upgrade-plan apply --push --squash=9999
+
+      - name: Find latest advisor error log
+        if: failure()  # only run if something failed earlier
+        id: find_log
+        run: |
+          if [ -d ".advisor/errors" ]; then
+            LATEST_LOG=$(ls -t .advisor/errors/*.log 2>/dev/null | head -n 1)
+            if [ -n "$LATEST_LOG" ]; then
+              echo "Found latest log file: $LATEST_LOG"
+              echo "log_path=$LATEST_LOG" >> $GITHUB_OUTPUT
+            else
+              echo "No .log files found in .advisor/errors"
+            fi
+          else
+            echo "No .advisor/errors directory found"
+          fi
+
+      - name: Upload latest advisor error log
+        if: failure() && steps.find_log.outputs.log_path != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: advisor-errors.log
+          path: ${{ steps.find_log.outputs.log_path }}
