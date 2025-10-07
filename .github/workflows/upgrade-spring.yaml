@@ -12,6 +12,7 @@ jobs:
       - name: Setup Maven Settings
         uses: s4u/setup-maven-action@v1.18.0
         with:
+          settings-repositories: '[{"id":"spring-commercial", "url":"https://packages.broadcom.com/artifactory/spring-enterprise"}]'
           settings-servers: '[{"id": "spring-commercial", "username": "${{ vars.SPRING_COMMERCIAL_USER }}", "password": "${{ secrets.SPRING_COMMERCIAL_TOKEN }}"}]'
 
       - name: Fix settings.xml
