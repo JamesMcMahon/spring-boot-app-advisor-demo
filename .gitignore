@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### For Github Actions
+
+application-advisor-cli-linux.tar
+cli-binary/
+
