@@ -56,5 +56,5 @@ jobs:
         if: failure() && steps.find_log.outputs.log_path != ''
         uses: actions/upload-artifact@v4
         with:
-          name: latest-advisor-error-log
+          name: advisor-errors.log
           path: ${{ steps.find_log.outputs.log_path }}
