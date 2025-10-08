@@ -1,4 +1,0 @@
-{
-  "name": "Spring Upgrade Example Container",
-  "image": "mcr.microsoft.com/devcontainers/java:17"
-}
