@@ -15,19 +15,19 @@ public class MessageController {
         this.dbMessageRepository = dbMessageRepository;
     }
 
-    @GetMapping("/message")
+    @GetMapping({"/message", "/message/"})
     public String getMessage() {
         return "Hello World!";
     }
 
-    @GetMapping("/db-messages")
+    @GetMapping({"/db-messages", "/db-messages/"})
     public Collection<String> getMessageFromDB() {
         return StreamSupport.stream(dbMessageRepository.findAll().spliterator(), false)
                 .map(DBMessage::getMessage)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/secure-message")
+    @GetMapping({"/secure-message", "/secure-message/"})
     public String getSecureMessage() {
         return "Hello Secure World!";
     }
