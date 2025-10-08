@@ -1,23 +1,14 @@
-# Spring Boot Upgrade Example
+# Spring Application Advisor Demo
 
-Simple example of upgrading Spring Boot 2 to Spring Boot 3. Refer to the commit history for the upgrade steps.
+This repo contains a simple outdated Spring Boot application and infrastructure to run [Spring Application Advisor](https://enterprise.spring.io/spring-application-advisor) in the pipeline.
 
-### Other Useful Examples
+## Setup needed for pipeline
 
-Phil Webb has a talk on the upgrade process with a sample repo.
+### Repository variables
 
-[![Mind the Gap: Jumping from Spring Boot 2.x to 3.x](https://img.youtube.com/vi/HrRQExD3xow/0.jpg)](https://www.youtube.com/watch?v=HrRQExD3xow)
+* `SPRING_COMMERCIAL_USER` - user for the broadcom commercial registry
 
-[Sample Repo](https://github.com/philwebb/upgrading-to-spring-boot-3)
+### Secret variables
 
-## Branches
-
-* `example-upgrade` - example of the upgrade with simplified commits, branch may be rewritten in the future, so I
-  recommend pulling with `git pull -r`.
-* `main` - Spring Boot 2.7 example project.
-* `upgrade` - Commits to upgrade from Spring Boot 2 to 3.
-
-## Components
-
-The application uses Spring Data with and H2 in-memory datastore for data retrieval and Spring Security for
-authentication and authorization. 
+* `SPRING_COMMERCIAL_TOKEN` - token for the broadcom commercial registry
+* `GIT_TOKEN_FOR_PRS` - token used to allow App Advisor to create PRs. Permissions needed: read and write for `contents` and `pull requests`.
