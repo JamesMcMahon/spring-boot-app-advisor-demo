@@ -6,6 +6,7 @@ on:
       upgrade-plan-steps:
         required: true
         type: number
+        default: 0
         description: 'Number of plan upgrade plan steps to apply'
 
 jobs:
