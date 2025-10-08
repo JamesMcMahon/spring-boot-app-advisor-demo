@@ -2,6 +2,10 @@ name: Upgrade Spring
 
 on:
   workflow_dispatch:
+    inputs:
+      upgrade-plan-steps:
+        type: number
+        description: 'Number of plan upgrade plan steps to apply'
 
 jobs:
   upgrade:
@@ -34,7 +38,7 @@ jobs:
           GIT_TOKEN_FOR_PRS: ${{ secrets.GIT_TOKEN_FOR_PRS }}
         run: |
           advisor build-config get
-          advisor upgrade-plan apply --push
+          advisor upgrade-plan apply --push --squash=${{ github.event.inputs.upgrade-plan-steps }}
 
       - name: Find latest advisor error log
         if: failure()  # only run if something failed earlier
