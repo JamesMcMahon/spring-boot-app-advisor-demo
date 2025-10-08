@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       upgrade-plan-steps:
+        required: true
         type: number
         description: 'Number of plan upgrade plan steps to apply'
 
